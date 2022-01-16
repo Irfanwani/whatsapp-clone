@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +27,7 @@ SECRET_KEY = 'django-insecure-s7n^h7acp4*)p9$fv4bea@kw=i45-5!-5ngd9qw%2ap)-q%=9n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.92.205', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ["192.168.36.205", 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'chat',
-    
+    'knox'
+
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+AUTH_USER_MODEL = 'chat.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+}
+
+
+REST_KNOX = {
+    'TOKEN_TTL': None,
+    'USER_SERIALIZER': 'chat.serializers.UserSerializer'
+}
 
 ROOT_URLCONF = 'whatsapp.urls'
 
@@ -82,6 +97,11 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+SMS_BACKEND = 'sms.backends.console.SmsBackend'
+TWILIO_ACCOUNT_SID = 'ACa12a7dbcd1f53a48faf38c77e98b820f'
+TWILIO_AUTH_TOKEN = '7bf1b7d70c7fe3f6cb06be1dec7c0f1e'
 
 
 # Password validation
@@ -120,7 +140,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
